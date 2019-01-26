@@ -1,4 +1,4 @@
-package jrichardson.snhu.myrecipebox.model.component;
+package jrichardson.snhu.myrecipebox.model;
 
 import java.util.ArrayList;
 import java.util.List;

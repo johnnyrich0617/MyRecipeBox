@@ -1,4 +1,4 @@
-package jrichardson.snhu.myrecipebox.model.component;
+package jrichardson.snhu.myrecipebox.model;
 
 import jrichardson.snhu.myrecipebox.utils.RecipeUtils;
 import jrichardson.snhu.myrecipebox.exception.RecipeException;

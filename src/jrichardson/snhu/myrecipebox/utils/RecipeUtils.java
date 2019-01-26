@@ -2,7 +2,7 @@ package jrichardson.snhu.myrecipebox.utils;
 
 import java.util.List;
 import java.util.UUID;
-import jrichardson.snhu.myrecipebox.model.component.Ingredient;
+import jrichardson.snhu.myrecipebox.model.Ingredient;
 
 
 /**
