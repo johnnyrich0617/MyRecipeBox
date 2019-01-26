@@ -45,7 +45,8 @@ public class RecipeUtils {
     
     /**
      * Generates a random Unique Identifier
-     * @return A new random java.util.UUID 
+     * @return A new random java.util.UUID (Type 4)
+     * @see UUID
      */
     public static UUID generateUID(){
         return UUID.randomUUID();

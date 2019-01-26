@@ -10,10 +10,14 @@ public class RecipeException extends Exception {
     private final RecipeExceptionType type;
     
     /**
-     *
+     * Create a new RecipeException
+     * 
      * @param type  The type of error for the MyRecipeBox Application
      *              annotated as (@link #RecipeExceptionType)
      * @param message The detailed message for this exception.
+     * 
+     * @see RecipeExceptionType
+     * @see String
      */
     public RecipeException(RecipeExceptionType type, String message){
         super(message);
@@ -21,8 +25,10 @@ public class RecipeException extends Exception {
     }
    
     /**
-     *
-     * @return  The (@link #RecipeExceptionType) for this exception
+     * Get the RecipeExceptionType for this exception
+     * 
+     * @return  The RecipeExceptionType for this exception
+     * @see RecipeExceptionType
      */
     public RecipeExceptionType getType(){
         return this.type;
