@@ -1,6 +1,7 @@
 package jrichardson.snhu.myrecipebox.model;
 
 import java.util.UUID;
+import jrichardson.snhu.myrecipebox.exception.RecipeException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -25,30 +26,43 @@ public class IngredientTest {
     private final int ing1CalorieCount = 1;
     private final int ing2CalorieCount = 2;
     
-    
-    
-    
+    /**
+     * Main Test Class for the MyRecipeBox Ingredient Class
+     */
     public IngredientTest() {
     }
     
+    /**
+     *
+     */
     @BeforeClass
     public static void setUpClass() {
     }
     
+    /**
+     *
+     */
     @AfterClass
     public static void tearDownClass() {
     }
     
+    /**
+     * Set up the class before the test run
+     */
     @Before
     public void setUp() {
         try{
             ing1 = new Ingredient(ing1Name, ing1Amount, ing1UoM, ing1CalorieCount);
             ing2 = new Ingredient(ing2Name, ing2Amount, ing2UoM, ing2CalorieCount);
         }
-        catch(Exception e){
+        catch(RecipeException re){
+            fail(re.getMessage());
         }
     }
     
+    /**
+     *
+     */
     @After
     public void tearDown() {
     }
@@ -146,6 +160,7 @@ public class IngredientTest {
 
     /**
      * Test of setIngredientName method, of class Ingredient.
+     * @throws java.lang.Exception
      */
     @Test
     public void testSetIngredientName() throws Exception {
@@ -160,6 +175,7 @@ public class IngredientTest {
 
     /**
      * Test of setAmountOfIngredient method, of class Ingredient.
+     * @throws java.lang.Exception
      */
     @Test
     public void testSetAmountOfIngredient() throws Exception {
@@ -173,6 +189,7 @@ public class IngredientTest {
 
     /**
      * Test of setUnitOfMeasure method, of class Ingredient.
+     * @throws java.lang.Exception
      */
     @Test
     public void testSetUnitOfMeasure() throws Exception {
@@ -181,6 +198,7 @@ public class IngredientTest {
 
     /**
      * Test of setCaloriesPerUOM method, of class Ingredient.
+     * @throws java.lang.Exception
      */
     @Test
     public void testSetCaloriesPerUOM() throws Exception {

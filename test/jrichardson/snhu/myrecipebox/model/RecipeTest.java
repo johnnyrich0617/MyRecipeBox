@@ -12,7 +12,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- *
+ * Test Class for the MyRecipeBox Recipe Class
  * @author jrichardson SNHU
  */
 public class RecipeTest {
@@ -20,17 +20,29 @@ public class RecipeTest {
     private Recipe recipe;
     private List<Ingredient> ingredients = new ArrayList<>();
     
+    /**
+     *
+     */
     public RecipeTest() {
     }
     
+    /**
+     *
+     */
     @BeforeClass
     public static void setUpClass() {
     }
     
+    /**
+     *
+     */
     @AfterClass
     public static void tearDownClass() {
     }
     
+    /**
+     *  Setup for the Test
+     */
     @Before
     public void setUp() {
         
@@ -48,10 +60,13 @@ public class RecipeTest {
                                                 RecipeType.DESERT, 8, true);
             
         }catch(RecipeException re){
-            
+            fail(re.getMessage());
         }
     }
     
+    /**
+     *
+     */
     @After
     public void tearDown() {
     }
