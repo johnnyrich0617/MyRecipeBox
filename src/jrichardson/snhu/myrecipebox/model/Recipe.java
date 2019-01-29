@@ -195,12 +195,29 @@ public class Recipe {
 
     @Override
     public String toString() {
-        //TODO update this method to return true string value
-        return "Recipe{" + "IngredientList=" + IngredientList + 
-                ", type=" + type + ", favorite=" + favorite + 
-                ", recipeName=" + recipeName + ", uid=" + uid + 
-                ", totalCalories=" + totalCalories + 
-                ", numServings=" + numServings + '}';
+        
+        String allIngredients = "Ingredients [\n\t\t";
+        
+        if(!IngredientList.isEmpty()){
+            for(Ingredient ingredient : IngredientList){
+                allIngredients = (allIngredients + "\t"+ ingredient.toString()+"\n\t\t");        
+            }
+        
+            allIngredients = allIngredients + "\n]";
+        }
+        else{
+            allIngredients = "Ingredients []\n";
+        }
+        
+        return ("Recipe{\n\t"
+                +"recipeName      = " +this.recipeName+ ",\n\t"
+                +"type            = " +this.type+ ",\n\t"
+                +"favorite        = " +this.favorite+ ",\n\t"
+                +"totalCalories   = " +this.totalCalories+ ",\n\t"
+                +"numServings     = " +this.numServings+ ",\n\t"
+                +"Unique ID       = " +this.getUid().toString()+ ",\n\t"
+                +"HashCode        = " +this.hashCode()+ "\n\t"
+                + allIngredients);    
     }
 
     @Override
