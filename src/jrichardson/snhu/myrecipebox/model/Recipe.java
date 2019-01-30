@@ -83,10 +83,11 @@ public class Recipe {
 
     /**
      *
-     * @param type
+     * 
      * @param recipeName
+     * @param type
      */
-    public Recipe(RecipeType type, String recipeName) {
+    public Recipe(String recipeName, RecipeType type){
         this.type = type;
         this.recipeName = recipeName;
         this.favorite = false;
@@ -111,6 +112,8 @@ public class Recipe {
      */
     public void setIngredientList(List<Ingredient> IngredientList) {
         this.IngredientList = IngredientList;
+       // calculate or recalculate (if update) the total calorie count
+        this.totalCalories = RecipeUtils.calcRecipeTotalCalories(this.IngredientList);
     }
 
     /**
@@ -205,7 +208,7 @@ public class Recipe {
                                   + ingredient.toString()+"\n\t\t");        
             }
         
-            allIngredients = allIngredients + "\n]";
+            allIngredients = allIngredients + "\n\t]";
         }
         else{
             allIngredients = "Ingredients []\n";
@@ -219,7 +222,8 @@ public class Recipe {
                 +"numServings     = " +this.numServings+ ",\n\t"
                 +"Unique ID       = " +this.getUid().toString()+ ",\n\t"
                 +"HashCode        = " +this.hashCode()+ "\n\t"
-                + allIngredients);    
+                + allIngredients
+                +"\n\t},");    
     }
 
     @Override
