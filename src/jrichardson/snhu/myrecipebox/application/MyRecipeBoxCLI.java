@@ -13,11 +13,21 @@ public class MyRecipeBoxCLI {
     
     
     /**
+     * Main CLI Method for the MyRecipeBox Application
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         
-        
+        if(args.length > 0 && args[0].equalsIgnoreCase("no_user")){
+            NoUserInput();
+        }
+        else{
+            UserInput();
+        }
+    }
+    
+    private static void NoUserInput(){
+        //Testing a single Recipe Class based on static data
         //Lets Test the Recipe Class and Print to console
       Recipe applePie;
       List<Ingredient> ingredients = new ArrayList<>();
@@ -39,9 +49,14 @@ public class MyRecipeBoxCLI {
             System.out.print(applePie.toString());
            
       }catch(RecipeException re){
-          
-      }
-        
-       
+          System.out.println(re.getType().toString());
+          System.out.println();
+          System.out.println(re.getMessage());
+          System.exit(1);
+      }  
+    }
+    
+    private static void UserInput(){
+        System.out.println(">>>>>>>>> LOOKING FOR USER INPUT >>>>>>>>>>>>>>>");
     }
 }

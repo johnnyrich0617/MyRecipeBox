@@ -37,7 +37,7 @@ public class Recipe {
         this.uid = RecipeUtils.generateUID();
         this.numServings = 0;
         this.totalCalories = RecipeUtils.calcRecipeTotalCalories(IngredientList);
-        Recipe.LOG.exiting("Recipe Class", "Defualt Constructor::Reciper()");
+        Recipe.LOG.exiting("Recipe Class", "Defualt Constructor::Recipe()");
     }
 
     /**
@@ -69,7 +69,8 @@ public class Recipe {
      * @param numServings
      * @param favorite
      */
-    public Recipe(String recipeName, RecipeType type, int numServings, boolean favorite) {
+    public Recipe(String recipeName, RecipeType type, int numServings, 
+                                                            boolean favorite) {
         this.type = type;
         this.favorite = favorite;
         this.recipeName = recipeName;
@@ -200,7 +201,8 @@ public class Recipe {
         
         if(!IngredientList.isEmpty()){
             for(Ingredient ingredient : IngredientList){
-                allIngredients = (allIngredients + "\t"+ ingredient.toString()+"\n\t\t");        
+                allIngredients = (allIngredients + "\t"
+                                  + ingredient.toString()+"\n\t\t");        
             }
         
             allIngredients = allIngredients + "\n]";
