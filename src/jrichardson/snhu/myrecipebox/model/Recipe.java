@@ -139,6 +139,23 @@ public class Recipe {
     public double getTotalCalories() {
         return totalCalories;
     }
+    /**
+     * Get a particular Ingredient based on the Ingredient's name
+     * @param ingredientName The name of the Ingredient to return
+     * @return The named Ingredient
+     */
+    public Ingredient getIngredient(String ingredientName){
+        return null;
+    }
+    
+    /**
+     * Request an Ingredient with a particular UID
+     * @param ingredientUID The unique identifier to the requested Ingredient
+     * @return The requested Ingredient matching the requested Ingredient UID
+     */
+    public Ingredient getIngredient(UUID ingredientUID){
+        return null;
+    }
 
     /**
      * Get the number of servings for this Recipe
