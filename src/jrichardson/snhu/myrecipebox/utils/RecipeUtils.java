@@ -1,6 +1,5 @@
 package jrichardson.snhu.myrecipebox.utils;
 
-import java.lang.InterruptedException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -116,6 +115,17 @@ public class RecipeUtils {
             //log any issues we encountered, but dont kill, it will just not 
             //clear the screen.  We are eating this exception
             RecipeUtils.LOG.log(Level.SEVERE, ioe.getMessage(), ioe);
+        }
+    }
+    
+    public static void cleanup(String os, File file, File dir){
+        //if we are running in a windows runtime
+        //remove tha windows script file if its there
+        if(os.contains("Windows") && file.exists()){
+            //remove the file first
+            file.delete();
+            //then the temp dir
+            dir.delete();
         }
     }
     
