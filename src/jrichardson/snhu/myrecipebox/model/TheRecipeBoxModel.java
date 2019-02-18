@@ -1,6 +1,7 @@
 package jrichardson.snhu.myrecipebox.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -22,18 +23,18 @@ import java.util.UUID;
  * @author jrichardson SNHU
  */
 public class TheRecipeBoxModel {
-    
-    ArrayList<Recipe> recipeList;
-    HashMap<UUID,ArrayList> ingredientMap;
-    private String test;
+    /**
+     * RecipeBox Model main container
+     */
+    HashMap<UUID,Recipe> recipeMap;
+   
     
     /**
      * Private constructor hidden from external access.  
      * Used to create the TheRecipeBoxModel INSTANCE.
      */
     private TheRecipeBoxModel() {
-        this.recipeList = new ArrayList<>();
-        this.ingredientMap = new HashMap<>();
+        this.recipeMap = new HashMap<>();
     }
     
     /**
@@ -44,13 +45,15 @@ public class TheRecipeBoxModel {
         return TheRecipeBoxModelHolder.INSTANCE;
     }
     
-    public String getTest(){
-        return this.test;
-    }
-    
-    public void setTest(String testdata){
-        this.test = testdata;
-    }
+    /**
+     *
+     * @param recipe
+     */
+    public void add(Recipe recipe){
+       if(recipe != null){
+        this.recipeMap.put(recipe.getUid(), recipe);
+       }
+   }
     
     /**
      * Get a particular Ingredient for a recipe based on the Ingredient's name
@@ -59,7 +62,21 @@ public class TheRecipeBoxModel {
      * @return The named Ingredient
      */
     public Ingredient getRecipeIngredient(String recipeName, String ingredientName){
-        return null;
+        
+        if(recipeName != null && ingredientName != null){
+            Collection<Recipe> recipes = this.recipeMap.values();
+            ArrayList<Recipe> recipeList = new ArrayList<>(recipes);
+        
+            for(Recipe recipe : recipeList){
+                if (recipe.getRecipeName().equals(recipeName)){
+                    return recipe.getIngredient(ingredientName);       
+                }
+            }
+            return null;
+        }
+        else
+            return null;
+        
     }
     
     /**
@@ -69,8 +86,54 @@ public class TheRecipeBoxModel {
      * @param ingredientUID The unique identifier to the requested Ingredient
      * @return The requested Ingredient matching the requested Ingredient UID
      */
-    public Ingredient getRecipeIngredient(Recipe recipeUID, UUID ingredientUID){
-        return null;
+    public Ingredient getRecipeIngredient(UUID recipeUID, UUID ingredientUID){
+      
+        Recipe recipe = this.recipeMap.get(recipeUID);        
+        return recipe == null ? null : recipe.getIngredient(ingredientUID);    
+    }
+    
+    /**
+     * Request an Ingredient from a recipe with a particular UID
+     * @param recipeUID unique identifier for a recipe in the model
+     * @param ingredientName the requested ingredient name
+     * @return The requested ingredient
+     */
+    public Ingredient getRecipeIngredient(UUID recipeUID, String ingredientName){
+       
+        Recipe recipe;  
+        recipe = this.recipeMap.get(recipeUID); 
+        return recipe == null ? null : recipe.getIngredient(ingredientName);   
+    }
+    
+    /**
+     * Request the Ingredient List for a recipe in the model
+     * @param recipeUID unique identifier for a recipe in the model
+     * @return The requested Ingredient List
+     */
+    public ArrayList<Ingredient> getRecipeIndredients(UUID recipeUID){
+      
+        Recipe recipe;
+        recipe = this.recipeMap.get(recipeUID);
+        return recipe == null ? null : (ArrayList)recipe.getIngredientList();
+        
+    }
+    
+    /**
+     * Request the Ingredient List for a recipe in the model
+     * @param recipeName common name for a recipe in the model
+     * @return The requested Ingredient List
+     */
+    public ArrayList<Ingredient> getRecipeIndredients(String recipeName){
+        
+        Collection<Recipe> recipes = this.recipeMap.values();
+        ArrayList<Recipe> recipeList = new ArrayList<>(recipes);
+        
+        for(Recipe recipe : recipeList){
+            if (recipe.getRecipeName().equals(recipeName)){
+                return (ArrayList)recipe.getIngredientList();
+            }
+        }
+        return null;       
     }
     
     /**
@@ -78,8 +141,8 @@ public class TheRecipeBoxModel {
      * @param recipeUID  The unique ID of the requested Recipe
      * @return The requested Recipe
      */
-    public Recipe getRecipe(UUID recipeUID){
-        return null;
+    public Recipe get(UUID recipeUID){
+        return this.recipeMap.get(recipeUID);
     }
     
     /**
@@ -87,8 +150,90 @@ public class TheRecipeBoxModel {
      * @param recipeName The name of the requested Recipe
      * @return The requested Recipe
      */
-    public Recipe getRecipe(String recipeName){
+    public Recipe get(String recipeName){
+        
+        Collection<Recipe> recipes = this.recipeMap.values();
+        ArrayList<Recipe> recipeList = new ArrayList<>(recipes);
+        
+        for(Recipe recipe : recipeList){
+            if (recipe.getRecipeName().equals(recipeName)){
+                return recipe;
+            }
+        }
         return null;
+    }
+    
+    /**
+     * Get an ordered list representation of the model
+     * @return the requested ordered list
+     */
+    public HashMap<Integer,String> getOrderedRecipeList(){
+        
+        HashMap<Integer, String> orderedList = new HashMap<>();
+        Collection<Recipe> recipes = this.recipeMap.values();
+        ArrayList<Recipe> recipeList = new ArrayList<>(recipes);
+        int i = 1;
+        
+        for(Recipe recipe : recipeList){
+            orderedList.put(i, recipe.getRecipeName());
+            i++;
+        }
+        
+        return orderedList;
+    }
+
+    @Override
+    public String toString() {
+        
+        Collection<Recipe> recipes = this.recipeMap.values();
+        ArrayList<Recipe> recipeList = new ArrayList<>(recipes);
+        String recipeBoxData= "MyRecipeBox [\n\t";
+        
+        for (Recipe recipe : recipeList){
+            recipeBoxData = recipeBoxData + recipe.toString();
+        }
+        
+        recipeBoxData = recipeBoxData + "\n]";
+        
+        return recipeBoxData;
+    }
+    
+    /**
+     *
+     */
+    public void printAllRecipeNames(){
+        Collection<Recipe> recipes = this.recipeMap.values();
+        ArrayList<Recipe> recipeList = new ArrayList<>(recipes);
+        int i = 1;
+        
+        System.out.println("Your Recipe Box Recipes......");
+        System.out.println();
+        for(Recipe recipe : recipeList){
+            System.out.println(i + ". " + recipe.getRecipeName());
+            i++;
+        }
+    }
+    
+    /**
+     *
+     * @param recipeName
+     */
+    public void printRecipe(String recipeName){
+       Collection<Recipe> recipes = this.recipeMap.values();
+        ArrayList<Recipe> recipeList = new ArrayList<>(recipes);
+        
+        recipeList.stream().filter((recipe) -> (recipe.getRecipeName()
+                                                .equals(recipeName)))
+                                                .forEachOrdered((recipe) -> {
+         System.out.println(recipe.toString());
+        });
+    }
+    
+    /**
+     *
+     */
+    public void printRecipeBox(){
+        System.out.println(this.toString());
     }
     
     /**
