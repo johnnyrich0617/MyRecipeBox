@@ -1,44 +1,223 @@
 package jrichardson.snhu.myrecipebox.controller;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jrichardson.snhu.myrecipebox.application.MyRecipeBoxCLI;
 import jrichardson.snhu.myrecipebox.exception.RecipeException;
 import jrichardson.snhu.myrecipebox.exception.RecipeExceptionType;
 import jrichardson.snhu.myrecipebox.model.Ingredient;
 import jrichardson.snhu.myrecipebox.model.Recipe;
 import jrichardson.snhu.myrecipebox.model.RecipeType;
+import jrichardson.snhu.myrecipebox.model.RecipeBoxModel;
 import jrichardson.snhu.myrecipebox.utils.RecipeUtils;
 
 /**
- * The CLI controller for the MyRecipeBox Application
+ * The CLI controller for the MyRecipeBox Application.  
+ * Implements the AppController Interface
+ * @see AppController
  * @author richardson SNHU
+ * 
  */
-public class RecipeBoxCLIController {
+public class RecipeBoxCLIController implements AppController{
     private static final Logger LOG = Logger.getLogger(RecipeBoxCLIController.class.getName());
+    private RecipeBoxModel model;
+    private Scanner sc;
+    private Recipe aRecipe;
     
-    public RecipeBoxCLIController(){}
+    /**
+     * RecipeBoxCLIController default constructor
+     */
+    public RecipeBoxCLIController(){
+        sc = new Scanner(System.in);
+    }
     
-    public Recipe newRecipe(){
+    /**
+     * This controllers run method.  Entrance point for program flow start
+     * on this controller
+     * @param model The data model for this controller
+     * @see AppController
+     */
+    @Override
+    public void run(RecipeBoxModel model){
         
-        RecipeBoxCLIController.LOG.log(Level.INFO, "Taking User Input for Test");
+            RecipeBoxCLIController.LOG.log(Level.INFO, "run():: Controller Start ...");
+            boolean addAnother;
+            
+            //set the model for this controller
+            this.model = model;
+        try{
+            //start the welcome message
+            System.out.println();
+            System.out.println("Welcome to your Recipe box! ");
+            System.out.println();
+            System.out.println("This Application will allow you to create new recipes");
+            System.out.println("and add them to a collection known as the MyRecipeBox");
+            System.out.println("The Application will begin soon, hope you enjoy it!");
+            Thread.sleep(3000);  //sleep for 3 secs, possible splash screen
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            //start the program flow for collection
+            System.out.println("Would you like to add a new Recipe to your box? Y or N");
+            String answer = sc.nextLine();
+            if(!answer.equalsIgnoreCase("Yes") && !answer.equalsIgnoreCase("Y" )){
+                //guess not, say good bye and return to exit
+                System.out.println();
+                System.out.println();
+                System.out.println();
+                System.out.println();
+                sayThankYou();
+                return;
+            }
+            // loop until the user has no more recipes to add
+            do{
+                aRecipe = newRecipe();
+                model.add(aRecipe);
+                System.out.println();
+                System.out.println("Would you like to add another Recipe? Y or N");
+                answer = sc.nextLine();
+                addAnother = answer.equalsIgnoreCase("Yes") || answer.equalsIgnoreCase("Y" );
+
+            }while(addAnother);
+            
+            RecipeUtils.clearScreen();
         
-        //What operating runtime are we in
-        final String os = System.getProperty("os.name");
-        /**
-            Windows script file to clear the screen, its a 
-            resource file on the classpath (cls.bat). This is required on Windows 
-            due to issues execing "cmd /c cls" from a processBuilder
-        */
-        //the script file name
-        final String batFile = "cls.bat";
-        //the temp dir
-        final String tempDir = "C:/StepTestDir";
-        File TempDir = new File(tempDir);
-        File file = new File(TempDir.getPath()+"/"+batFile);
+            //see if the user wants to print any of the recipes
+            printOptions();
+        
+            //clean up the application before exit
+            RecipeUtils.cleanup();
+        
+            // exit the application
+            sayThankYou();
+            
+            RecipeBoxCLIController.LOG.log(Level.INFO, "run():: Controller End ...");
+        }
+        catch(InterruptedException ie){
+            RecipeBoxCLIController.LOG.log(Level.WARNING, ie.getMessage());
+            fastExit();
+        }
+        
+    }
+    /**
+     * Setup print options for the user
+     */
+    private void printOptions() {
+        
+        String answer;
+        
+        Scanner sc = new Scanner(System.in);
+        
+        System.out.println("Would you like to see print options for your recipes? Y or N");
+            answer = sc.nextLine();
+            if(!answer.equalsIgnoreCase("Yes") && !answer.equalsIgnoreCase("Y" )){
+                 fastExit();
+            }
+       
+        do{ //continue until the user exits
+            int item = 0;
+
+          
+           while(item <= 0 || item > 4){
+                
+                System.out.println();
+                System.out.println();
+                System.out.println("1. Print your Recipe Box");
+                System.out.println("2. List all Your Recipes in your Recipe Box");
+                System.out.println("3. Print a Recipe from your Recipe Box");
+                System.out.println("4. Exit");
+                item = sc.nextInt();
+           }
+           //execute the selection
+           switch(item){
+               case 1:
+                   System.out.println(model.toString());                
+                   break;
+               case 2:                  
+                   printAllRecipeNames();                   
+                   break;
+               case 3:                  
+                   printRecipe(selectRecipe());                  
+                   break;
+               case 4:                   
+                    fastExit();
+                    break;
+           }
+           
+           System.out.println();
+           System.out.println();
+           
+        }while(true);
+    }
+    
+    /**
+     * Print all the names of the Recipes in the Model as a list
+     */
+    private void printAllRecipeNames(){
+        
+        ArrayList<Recipe> recipeList = model.getAllRecipes();
+        
+        int i = 1;
+        
+        System.out.println("Your Recipe Box Recipes......");
+        System.out.println();
+        System.out.println();
+        for(Recipe recipe : recipeList){
+            System.out.println();
+            System.out.println(i + ". " + recipe.getRecipeName());
+            i++;
+        }
+    }
+    
+    /**
+     * Print a specified Recipe
+     * @param recipeName The name of the Recipe to print
+     */
+    private void printRecipe(String recipeName){
+         ArrayList<Recipe> recipeList = model.getAllRecipes();
+         
+         
+        recipeList.stream().filter((recipe) -> (recipe.getRecipeName()
+                                                .equals(recipeName)))
+                                                .forEachOrdered((recipe) -> {
+         System.out.println(recipe.toString());
+        });
+    }
+    
+    /**
+     * Print a list of Recipes for the user to select from
+     * @return The common name of the selected Recipe
+     */
+    private String selectRecipe(){
+   
+        HashMap<Integer, String> recipes = model.getOrderedRecipeList();
+        int selection;
+        
+        recipes.entrySet().stream().map((entry) -> {
+            System.out.println();
+            return entry;
+        }).forEachOrdered((entry) -> {
+            System.out.println(entry.getKey()+ ". " + entry.getValue());
+        });
+        
+        System.out.println();
+        System.out.println("Please select the Recipe you would like to print.");
+        selection = sc.nextInt();
+        
+        return recipes.get(selection);    
+        
+    } 
+    
+    /**
+     * Create a new Recipe
+     * @return The newly created Recipe
+     */
+    private Recipe newRecipe(){
+        
+        RecipeBoxCLIController.LOG.log(Level.INFO, "newRecipe():: Creating a new Recipe");
         
         //The ArrayList for the Recipe Ingredients collection
         ArrayList<Ingredient> ingredientList = new ArrayList<>();
@@ -62,15 +241,15 @@ public class RecipeBoxCLIController {
         //.......................................................
         
         //Clear the Screen to begin the session
-        RecipeUtils.clearScreen(os, TempDir, file, MyRecipeBoxCLI.class);
+        RecipeUtils.clearScreen();
         
         //create the new Recipe with user input
-        createRecipe(theRecipe, sc);
+        createRecipe(theRecipe);
                
        do{ //while we still want to create ingredients for this recipe
            
              //Clear the Screen to begin the session
-             RecipeUtils.clearScreen(os, TempDir, file, RecipeBoxCLIController.class);
+             RecipeUtils.clearScreen();
           
             //Start the collection for the ingedients
             System.out.println("Would you like to create a new ingredient? " 
@@ -87,7 +266,7 @@ public class RecipeBoxCLIController {
                     addMoreIngredients = true;
                     //collect ingredient data and add to the 
                     //IngredientList for this Recipe
-                    ingredientList.add(fillIngredient(sc));
+                    ingredientList.add(fillIngredient());
                     
                  //were there any issues while creating the ingredients   
                 }catch(RecipeException re){
@@ -136,11 +315,13 @@ public class RecipeBoxCLIController {
        //so add them to the recipe
        theRecipe.setIngredientList(ingredientList);
        return theRecipe;
-       
-       
     }
     
-    private void createRecipe(Recipe theRecipe, Scanner sc){
+    /**
+     * Get the Recipe details from the user
+     * @param theRecipe The Recipe Shell
+     */
+    private void createRecipe(Recipe theRecipe){
         String recipeName;
         int type;
         int numServ;
@@ -214,8 +395,13 @@ public class RecipeBoxCLIController {
                 break;
         }
     }
-        
-    private Ingredient fillIngredient(Scanner sc) throws RecipeException{
+    
+/**
+ * Get an ingredient for a recipe
+ * @return The new ingredient
+ * @throws RecipeException 
+ */    
+    private Ingredient fillIngredient() throws RecipeException{
         /*
         There is no default constructor for the Ingredient Class
         Collect the data and return the new Ingredient
@@ -261,8 +447,20 @@ public class RecipeBoxCLIController {
         
     }
     
-    private void printRecipe(Recipe recipe){
-        //print the Recipe to the console
-        System.out.print(recipe.toString());
+    /**
+     * Exit the program
+     */
+    private void fastExit() {
+        sayThankYou();
+        System.exit(0);
+    }
+    
+    /**
+     * Say Good Bye
+     */
+    private void sayThankYou(){
+        System.out.println();
+        System.out.println();
+        System.out.println("Thank you, hope you enjoyed the MyRecipeBox Application");
     }
 }

@@ -6,23 +6,23 @@ import java.util.HashMap;
 import java.util.UUID;
 
 /**
- * TheRecipeBoxModel is the main data model for the MyRecipeBox Application.
+ * RecipeBoxModel is the main data model for the MyRecipeBox Application.
  * 
- * TheRecipeBoxModel is a singleton (There can be only one!) based on 
- * the Bill Pugh implementation
- * 
- * This singleton is completely thread safe based on the the use of a static 
- * inner class for the lazy initialization and containerization of the 
- * static final INSTANCE of the class. Static Inner classes are only 
- * instantiated when accessed and so thereby thread safe based on 
- * thread safety guarantees for static initialization.
- * 
- * The first call to getInstance() will create the INSTANCE, with each subsequent
- * call only returning the static final INSTANCE.`
+ * RecipeBoxModel is a singleton (There can be only one!) based on 
+ the Bill Pugh implementation
+ 
+ This singleton is completely thread safe based on the the use of a static 
+ inner class for the lazy initialization and containerization of the 
+ static final INSTANCE of the class. Static Inner classes are only 
+ instantiated when accessed and so thereby thread safe based on 
+ thread safety guarantees for static initialization.
+ 
+ The first call to getInstance() will create the INSTANCE, with each subsequent
+ call only returning the static final INSTANCE.`
  * 
  * @author jrichardson SNHU
  */
-public class TheRecipeBoxModel {
+public class RecipeBoxModel {
     /**
      * RecipeBox Model main container
      */
@@ -33,27 +33,54 @@ public class TheRecipeBoxModel {
      * Private constructor hidden from external access.  
      * Used to create the TheRecipeBoxModel INSTANCE.
      */
-    private TheRecipeBoxModel() {
+    private RecipeBoxModel() {
         this.recipeMap = new HashMap<>();
     }
     
     /**
-     * Used to create and retrieve the TheRecipeBoxModel INSTANCE
-     * @return The "TheRecipeBoxModel" INSTANCE singleton
+     * Used to create and retrieve the RecipeBoxModel INSTANCE
+     * @return The "RecipeBoxModel" INSTANCE singleton
      */
-    public static TheRecipeBoxModel getInstance() {
+    public static RecipeBoxModel getInstance() {
         return TheRecipeBoxModelHolder.INSTANCE;
     }
     
     /**
-     *
-     * @param recipe
+     * Add a Recipe to the RecipeBox
+     * @param recipe  The Recipe to add
      */
     public void add(Recipe recipe){
        if(recipe != null){
         this.recipeMap.put(recipe.getUid(), recipe);
        }
    }
+    
+    /**
+     * Request a Recipe for the RecipeBox Model
+     * @param recipeUID  The unique ID of the requested Recipe
+     * @return The requested Recipe
+     */
+    public Recipe get(UUID recipeUID){
+        return this.recipeMap.get(recipeUID);
+    }
+    
+    /**
+     * Request a Recipe for the RecipeBox Model
+     * @param recipeName The name of the requested Recipe
+     * @return The requested Recipe
+     */
+    public Recipe get(String recipeName){
+        
+        Collection<Recipe> recipes = this.recipeMap.values();
+        ArrayList<Recipe> recipeList = new ArrayList<>(recipes);
+        
+        for(Recipe recipe : recipeList){
+            if (recipe.getRecipeName().equals(recipeName)){
+                return recipe;
+            }
+        }
+        return null;
+    }
     
     /**
      * Get a particular Ingredient for a recipe based on the Ingredient's name
@@ -137,31 +164,15 @@ public class TheRecipeBoxModel {
     }
     
     /**
-     * Request a Recipe for the RecipeBox Model
-     * @param recipeUID  The unique ID of the requested Recipe
-     * @return The requested Recipe
+     * Returns a list of Recipes contained in this RecipeBox 
+     * @return List of all Recipes for this RecipeBox
      */
-    public Recipe get(UUID recipeUID){
-        return this.recipeMap.get(recipeUID);
+    public ArrayList<Recipe> getAllRecipes(){
+        Collection<Recipe> recipes = this.recipeMap.values();
+        return new ArrayList<>(recipes);
     }
     
-    /**
-     * Request a Recipe for the RecipeBox Model
-     * @param recipeName The name of the requested Recipe
-     * @return The requested Recipe
-     */
-    public Recipe get(String recipeName){
-        
-        Collection<Recipe> recipes = this.recipeMap.values();
-        ArrayList<Recipe> recipeList = new ArrayList<>(recipes);
-        
-        for(Recipe recipe : recipeList){
-            if (recipe.getRecipeName().equals(recipeName)){
-                return recipe;
-            }
-        }
-        return null;
-    }
+    
     
     /**
      * Get an ordered list representation of the model
@@ -198,46 +209,9 @@ public class TheRecipeBoxModel {
         return recipeBoxData;
     }
     
-    /**
-     *
-     */
-    public void printAllRecipeNames(){
-        Collection<Recipe> recipes = this.recipeMap.values();
-        ArrayList<Recipe> recipeList = new ArrayList<>(recipes);
-        int i = 1;
-        
-        System.out.println("Your Recipe Box Recipes......");
-        System.out.println();
-        for(Recipe recipe : recipeList){
-            System.out.println(i + ". " + recipe.getRecipeName());
-            i++;
-        }
-    }
     
     /**
-     *
-     * @param recipeName
-     */
-    public void printRecipe(String recipeName){
-       Collection<Recipe> recipes = this.recipeMap.values();
-        ArrayList<Recipe> recipeList = new ArrayList<>(recipes);
-        
-        recipeList.stream().filter((recipe) -> (recipe.getRecipeName()
-                                                .equals(recipeName)))
-                                                .forEachOrdered((recipe) -> {
-         System.out.println(recipe.toString());
-        });
-    }
-    
-    /**
-     *
-     */
-    public void printRecipeBox(){
-        System.out.println(this.toString());
-    }
-    
-    /**
-     * The private inner class of TheRecipeBoxModel.  This class is required as
+     * The private inner class of RecipeBoxModel.  This class is required as
      * part of the the Bill Pugh singleton design and implementation.  It serves as 
      * the thread safe isolation container for the singleton instance.
      * 
@@ -246,8 +220,8 @@ public class TheRecipeBoxModel {
     private static class TheRecipeBoxModelHolder {
 
         /**
-         * The thread safe singleton instance of "TheRecipeBoxModel"
+         * The thread safe singleton instance of "RecipeBoxModel"
          */
-        private static final TheRecipeBoxModel INSTANCE = new TheRecipeBoxModel();
+        private static final RecipeBoxModel INSTANCE = new RecipeBoxModel();
     }
 }

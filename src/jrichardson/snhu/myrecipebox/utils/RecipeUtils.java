@@ -18,6 +18,12 @@ import jrichardson.snhu.myrecipebox.model.Ingredient;
  */
 public class RecipeUtils {
     private static final Logger LOG = Logger.getLogger(RecipeUtils.class.getName());
+    //the script file name
+    private static final String BAT_FILE = "cls.bat";
+    //the temp dir
+    private static final String TEMP_DIR = "C:/StepTestDir";
+    
+    private static final String OS = System.getProperty("os.name");
        
     /**
      *
@@ -62,22 +68,18 @@ public class RecipeUtils {
     
     /**
      * Clear the CLI Application Screen(console)
-     * @param runtimeenv The runtime environment of this application
-     * @param dir Temp directory on the file system
-     * @param file The Windows batch file used to clear the screen 
-     * if running on Windows OS
-     * @param runtimeClass The class in which the class loader is associated,
-     * this is the usually the calling class
+     * Consumers of this method should call cleanUp before program exit
      */
-    public static void clearScreen(String runtimeenv, File dir, File file, 
-                                                        Class runtimeClass){
+    public static void clearScreen(){
+        File TempDir = new File(TEMP_DIR);
+        File file = new File(TempDir.getPath()+"/"+BAT_FILE);
         try{
             // if the file does not exit on the file system &&
             // we are running on a Windows platform
-            if(!file.exists() && runtimeenv.contains("Windows")){
+            if(!file.exists() && OS.contains("Windows")){
                 //no, then pull it from the jar file and push to the file system
-                InputStream is = runtimeClass.getClassLoader()
-                                      .getResourceAsStream("resources/cls.bat");
+                InputStream is = RecipeUtils.class.getClassLoader()
+                                      .getResourceAsStream("resources/"+BAT_FILE);
                 //the small buffer for the file read
                 byte[] buf = new byte[20];
                 //read in the file contents to the buffer
@@ -88,8 +90,8 @@ public class RecipeUtils {
                 //If we have data then write it out to a temp file for use
                 if(numread > 0){
                     //is the temp dir there, if not create it
-                    if(!dir.exists()){
-                        dir.mkdir();
+                    if(!TempDir.exists()){
+                        TempDir.mkdir();
                     }
 
                     //write out the buffer from the inputstream
@@ -101,7 +103,7 @@ public class RecipeUtils {
             }
 
             //Are we running in a windows environment?
-            if(runtimeenv.contains("Windows")){
+            if(OS.contains("Windows")){
                 //yes, exec the bat file to clear the screen
                 new ProcessBuilder(file.getPath()).inheritIO().start().waitFor();
             }
@@ -118,14 +120,21 @@ public class RecipeUtils {
         }
     }
     
-    public static void cleanup(String os, File file, File dir){
+    /**
+     * Clean up temp Files used by the utility.
+     * Consuming programs should call this if the ClearScrean method 
+     * has been invoked.
+     */
+    public static void cleanup(){
+        File TempDir = new File(TEMP_DIR);
+        File file = new File(TempDir.getPath()+"/"+BAT_FILE);
         //if we are running in a windows runtime
         //remove tha windows script file if its there
-        if(os.contains("Windows") && file.exists()){
+        if(OS.contains("Windows") && file.exists()){
             //remove the file first
             file.delete();
             //then the temp dir
-            dir.delete();
+            TempDir.delete();
         }
     }
     
